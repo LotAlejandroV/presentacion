@@ -1,0 +1,802 @@
+---
+pagetitle: "Continuidad en Moldes"
+lang: es
+title: "Continuidad [en Moldes]{.acc}"
+subtitle: "Una noción de continuidad para funciones en el mundo discreto"
+author: "Semillero de Matemáticas · Universidad EAFIT"
+date: "Octubre 2026"
+title-slide-attributes:
+  data-background-color: "#1f2a44"
+format:
+  revealjs:
+    theme: simple
+    width: 1280
+    height: 720
+    margin: 0.02
+    transition: fade
+    slide-number: false
+    progress: false
+    controls: true
+    center: false
+    include-in-header:
+      text: |
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@500;700&display=swap">
+        <style>
+          /* ---------- Portada ---------- */
+          .reveal .title-slide { text-align: left; font-family: Inter, "Helvetica Neue", Arial, sans-serif; }
+          .reveal .title-slide h1.title { font-family: "Space Grotesk", Inter, sans-serif; font-weight: 700; color: #f4f1ea; font-size: 2.3em; }
+          .reveal .title-slide .acc { color: #e07a3c; }
+          .reveal .title-slide .subtitle, .reveal .title-slide .author, .reveal .title-slide .date { color: #f4f1ea; font-size: .6em; margin: .3em 0; }
+
+          /* ---------- Diapositivas de preliminares (.intro) ---------- */
+          .reveal .slides section.intro { text-align: left; font-family: Inter, "Helvetica Neue", Arial, sans-serif; font-size: .72em; color: #1f2a44; }
+          .reveal .slides section.intro.dark { color: #f4f1ea; }
+          .reveal .slides section.intro h2 { font-family: "Space Grotesk", Inter, sans-serif; font-weight: 700; font-size: 1.7em; margin: 0 0 .5em; text-align: left; color: inherit; }
+          .reveal .slides section.intro p { margin: .45em 0; }
+          .reveal .slides section.intro mjx-container[display="true"] { text-align: left !important; margin: .25em 0 !important; }
+          .reveal .slides section.intro .acc { color: #e07a3c; }
+          .reveal .slides section.intro .card { background: #fff; color: #1f2a44; border-left: 9px solid #e07a3c; border-radius: 10px; padding: .45em 1.1em; margin: .45em 0; }
+          .reveal .slides section.intro .card.blue { border-left-color: #3b7ea1; }
+          .reveal .slides section.intro .card p { margin: .2em 0; }
+          .reveal .slides section.intro .columns { align-items: center; gap: 1em; }
+          .reveal .slides section.intro .gsvg { display: block; width: 100%; height: auto; }
+          .gsvg .gn { fill: #f4f1ea; }
+          .gsvg .gt { font: italic 700 30px Georgia, "Times New Roman", serif; text-anchor: middle; fill: #1f2a44; }
+          .gsvg .ge { stroke: #e07a3c; stroke-width: 7; }
+          .gsvg .gs { fill: none; stroke: #3b7ea1; stroke-width: 5; stroke-dasharray: 8 6; }
+        </style>
+---
+
+# Preliminares
+
+## ¿Qué es un molde? {.intro background-color="#f4f1ea"}
+
+Sea $X$ un conjunto. $\mathcal M_X\subseteq\mathcal P(X)$ es un **molde** de $X$ si:
+
+::: {.card}
+**1.** $\forall m\in\mathcal M_X:\ m\neq\emptyset\ \text{ y }\ |m|\le 2$
+:::
+
+::: {.card}
+**2.** $\displaystyle\bigcup_{m\in\mathcal M_X} m=X$
+:::
+
+::: {.card}
+**3.** $\{a\}\in\mathcal M_X\ \Rightarrow\ \{a\}\cap m=\emptyset\quad\forall m\in\mathcal M_X,\ m\neq\{a\}$
+:::
+
+::: notes
+Un molde es la "familia de adyacencias" de X: cada adyacencia tiene uno o dos elementos, todo elemento aparece en alguna, y un punto aislado {a} no comparte elementos con ninguna otra adyacencia.
+:::
+
+## Ejemplo: un conjunto y sus adyacencias {.intro .dark background-color="#1f2a44"}
+
+:::: {.columns}
+::: {.column width="45%"}
+$X=\{a,b,c,d,e\}$
+
+[$\mathcal M_X=\{\{a,b\},\{b,c\},\{c,d\},\{e\}\}$]{.acc}
+:::
+::: {.column width="55%"}
+```{=html}
+<svg class="gsvg" viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Grafo de adyacencias a-b-c-d y e aislado">
+  <line class="ge" x1="80" y1="100" x2="230" y2="100"/>
+  <line class="ge" x1="230" y1="100" x2="380" y2="100"/>
+  <line class="ge" x1="380" y1="100" x2="530" y2="100"/>
+  <circle class="gn" cx="80" cy="100" r="40"/><text class="gt" x="80" y="100" dy=".35em">a</text>
+  <circle class="gn" cx="230" cy="100" r="40"/><text class="gt" x="230" y="100" dy=".35em">b</text>
+  <circle class="gn" cx="380" cy="100" r="40"/><text class="gt" x="380" y="100" dy=".35em">c</text>
+  <circle class="gn" cx="530" cy="100" r="40"/><text class="gt" x="530" y="100" dy=".35em">d</text>
+  <circle class="gs" cx="305" cy="250" r="50"/>
+  <circle class="gn" cx="305" cy="250" r="40"/><text class="gt" x="305" y="250" dy=".35em">e</text>
+</svg>
+```
+:::
+::::
+
+## Función continua {.intro background-color="#f4f1ea"}
+
+Sean $(X,\mathcal M_X)$ y $(Y,\mathcal M_Y)$ espacios moldeados y $f:X\to Y$.
+
+::: {.card}
+**Definición**
+
+$f$ es **continua** si $\ \forall m_X\in\mathcal M_X\ \ \exists\, m_Y\in\mathcal M_Y:\ \ f(m_X)\subseteq m_Y$
+:::
+
+Romper una adyacencia es que su imagen no quede dentro de ninguna adyacencia de $Y$.
+
+Se pide contención, no igualdad: una función continua no rompe adyacencias, pero sí puede crearlas, pegando dos elementos en uno.
+
+## Ejemplo: continua y no continua {.intro .dark background-color="#1f2a44"}
+
+:::: {.columns}
+::: {.column width="52%"}
+$X=\{a,b,c,d,e\}$
+
+[$\mathcal M_X=\{\{a,b\},\{b,c\},\{c,d\},\{e\}\}$]{.acc}
+
+$Y=\{1,2,3\},\ \mathcal M_Y=\{\{1,2\},\{3\}\}$
+:::
+::: {.column width="48%"}
+```{=html}
+<svg class="gsvg" viewBox="0 0 700 140" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Grafo de adyacencias a-b-c-d y e aislado">
+  <line class="ge" x1="50" y1="70" x2="170" y2="70"/>
+  <line class="ge" x1="170" y1="70" x2="290" y2="70"/>
+  <line class="ge" x1="290" y1="70" x2="410" y2="70"/>
+  <circle class="gn" cx="50" cy="70" r="34"/><text class="gt" x="50" y="70" dy=".35em">a</text>
+  <circle class="gn" cx="170" cy="70" r="34"/><text class="gt" x="170" y="70" dy=".35em">b</text>
+  <circle class="gn" cx="290" cy="70" r="34"/><text class="gt" x="290" y="70" dy=".35em">c</text>
+  <circle class="gn" cx="410" cy="70" r="34"/><text class="gt" x="410" y="70" dy=".35em">d</text>
+  <circle class="gs" cx="590" cy="70" r="44"/>
+  <circle class="gn" cx="590" cy="70" r="34"/><text class="gt" x="590" y="70" dy=".35em">e</text>
+</svg>
+```
+:::
+::::
+
+:::: {.columns}
+::: {.column width="50%"}
+::: {.card .blue}
+**$g$ es continua**
+
+$a,b\mapsto 1;\ \ c,d\mapsto 2;\ \ e\mapsto 3$
+
+$\{a,b\}\mapsto\{1\}\subseteq\{1,2\};\ \ \{b,c\}\mapsto\{1,2\}$
+
+$\{c,d\}\mapsto\{2\};\ \ \{e\}\mapsto\{3\}$
+:::
+:::
+::: {.column width="50%"}
+::: {.card}
+**$h$ no es continua**
+
+$a\mapsto 1;\ \ b\mapsto 2;\ \ c,d,e\mapsto 3$
+
+$\{b,c\}\mapsto\{2,3\}\not\subseteq m_Y\quad\forall m_Y\in\mathcal M_Y$
+
+$h$ rompe la adyacencia $b$–$c$.
+:::
+:::
+::::
+
+## Vecindad y vecinos {.intro background-color="#f4f1ea"}
+
+:::: {.columns}
+::: {.column width="50%"}
+::: {.card}
+**Vecindad de $a$**
+
+$V_a=\{m\in\mathcal M_X : a\in m\}$
+
+El conjunto de todas las adyacencias que contienen a $a$.
+:::
+:::
+::: {.column width="50%"}
+::: {.card .blue}
+**Vecinos de $a$**
+
+$V_a^*=\displaystyle\bigcup_{m\in V_a} m$
+
+El conjunto de todos los elementos adyacentes a $a$.
+:::
+:::
+::::
+
+::: {.card}
+**Conjunto agujereado de vecinos**
+
+$\hat V_a^*=V_a^*\setminus\{a\}$
+
+El conjunto de vecinos de $a$, sin $a$.
+:::
+
+# Límite
+
+```{=html}
+<style>
+  /* ---------- Títulos y columnas ---------- */
+  .reveal .slides section.moldes h2 { font-size: 1.02em; margin: 0 0 .12em; text-align: center; }
+  .reveal .slides section.moldes .columns { align-items: center; gap: .4em; }
+
+  /* ---------- SVG ---------- */
+  .msvg { display: block; width: 100%; height: auto; max-height: 640px; }
+  .msvg text { font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif; }
+  .reveal .slides section .msvg .fragment { transition: opacity .6s ease; }
+
+  .msvg .nd   { fill: #fff; stroke: #94a3b8; stroke-width: 2.5; }
+  .msvg .nt   { font-size: 23px; font-style: italic; text-anchor: middle; fill: #475569; }
+  .msvg .nth  { font-size: 23px; font-style: italic; text-anchor: middle; font-weight: 700; }
+  .msvg .eg   { stroke: #cbd5e1; stroke-width: 6; stroke-linecap: round; }
+  .msvg .ptag { font-size: 36px; font-style: italic; text-anchor: middle; fill: #94a3b8; }
+  .msvg .tag  { font-size: 19px; font-weight: 700; text-anchor: middle; }
+  .msvg .small{ font-size: 16px; fill: #94a3b8; text-anchor: end; }
+  .msvg .rlab { font-size: 22px; font-weight: 700; font-style: italic; }
+  .msvg .badge{ font-size: 26px; font-weight: 700; }
+  .msvg .chipt{ font-size: 21px; font-weight: 700; text-anchor: middle; }
+
+  @keyframes pulso { 0%, 100% { stroke-opacity: .95; } 50% { stroke-opacity: .25; } }
+  .msvg .halo { animation: pulso 1.6s ease-in-out infinite; }
+
+  /* ---------- Panel de conjuntos / demostración ---------- */
+  .reveal .slides section .sets { font-size: .54em; line-height: 1.25; text-align: left; }
+  .reveal .slides section .sets .fragment,
+  .reveal .slides section .sets .fixed {
+    padding: .25em .6em; margin: .28em 0; border-left: 7px solid transparent;
+    border-radius: 8px; transition: all .45s ease;
+  }
+  .reveal .slides section .sets .fragment.current-fragment { border-left-color: #f59e0b; background: #fffbeb; }
+  .reveal .slides section .sets .fixed { border-left-color: #2563eb; background: #eff6ff; }
+  .reveal .slides section .sets mjx-container[display="true"] { text-align: left !important; margin: .15em 0 !important; }
+  .reveal .slides section .sets p { margin: 0; }
+</style>
+```
+
+## Límite: $\lim_{x\to a}f(x):=\bigcap_{y\in f(\hat V_a^*)}V_y^*$ {.moldes}
+
+:::::: {.columns}
+::::: {.column width="60%"}
+
+```{=html}
+<svg class="msvg" viewBox="0 0 760 545" xmlns="http://www.w3.org/2000/svg" role="img"
+     aria-label="Construcción del límite en un espacio moldeado">
+  <defs>
+    <marker id="l-mk" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker>
+    <clipPath id="l-clipA"><ellipse cx="340" cy="390" rx="150" ry="80"/></clipPath>
+  </defs>
+
+  <!-- Insignias de paso -->
+  <g class="fragment fade-out" data-fragment-index="0"><text class="badge" x="20" y="40" fill="#1e293b">f : X → Y</text></g>
+  <g class="fragment" data-fragment-index="0"><g class="fragment fade-out" data-fragment-index="1"><text class="badge" x="20" y="40" fill="#1e293b">① Vecinos de a</text></g></g>
+  <g class="fragment" data-fragment-index="1"><g class="fragment fade-out" data-fragment-index="3"><text class="badge" x="20" y="40" fill="#1e293b">② Imagen y vecinos de la imagen</text></g></g>
+  <g class="fragment" data-fragment-index="3"><text class="badge" x="20" y="40" fill="#16a34a">③ Intersección = lim</text></g>
+
+  <!-- Paneles -->
+  <rect x="70" y="72" width="670" height="124" rx="18" fill="#f8fafc" stroke="#e2e8f0"/>
+  <rect x="70" y="292" width="670" height="236" rx="18" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text class="ptag" x="35" y="132">X</text>
+  <text class="ptag" x="35" y="402">Y</text>
+  <text class="small" x="734" y="186">ℳ<tspan dy="5" font-size="11">X</tspan><tspan dy="-5"> = {{a,b}, {a,c}, {c,d}}</tspan></text>
+  <text class="small" x="734" y="308">ℳ<tspan dy="5" font-size="11">Y</tspan><tspan dy="-5"> = {{y₄,y₁}, {y₁,y₂}, {y₂,y₃}}</tspan></text>
+
+  <!-- Y: regiones (paso 2b) e intersección (paso 3) -->
+  <g class="fragment" data-fragment-index="2">
+    <ellipse cx="340" cy="390" rx="150" ry="80" fill="#2563eb" fill-opacity=".10" stroke="#2563eb" stroke-width="3" stroke-dasharray="9 6"/>
+    <text class="rlab" x="184" y="397" text-anchor="end" fill="#2563eb">V<tspan dy="-9" font-size="15">*</tspan><tspan dy="15" font-size="15">y₁</tspan></text>
+  </g>
+  <g class="fragment" data-fragment-index="2" style="transition-delay:.5s">
+    <ellipse cx="450" cy="390" rx="150" ry="80" fill="#7c3aed" fill-opacity=".10" stroke="#7c3aed" stroke-width="3" stroke-dasharray="9 6"/>
+    <text class="rlab" x="606" y="397" fill="#7c3aed">V<tspan dy="-9" font-size="15">*</tspan><tspan dy="15" font-size="15">y₂</tspan></text>
+  </g>
+  <g class="fragment" data-fragment-index="3">
+    <ellipse cx="450" cy="390" rx="150" ry="80" clip-path="url(#l-clipA)" fill="#16a34a" fill-opacity=".32" stroke="#16a34a" stroke-width="3.5"/>
+    <text x="395" y="512" text-anchor="middle" class="rlab" fill="#15803d">lim<tspan dy="9" font-size="14">x→a</tspan><tspan dy="-9"> f(x)</tspan> = V<tspan dy="-9" font-size="15">*</tspan><tspan dy="15" font-size="15">y₁</tspan><tspan dy="-6"> ∩ V</tspan><tspan dy="-9" font-size="15">*</tspan><tspan dy="15" font-size="15">y₂</tspan></text>
+  </g>
+
+  <!-- X: aristas base -->
+  <line class="eg" x1="180" y1="120" x2="290" y2="120"/>
+  <line class="eg" x1="290" y1="120" x2="400" y2="120"/>
+  <line class="eg" x1="400" y1="120" x2="510" y2="120"/>
+  <!-- X: aristas resaltadas (paso 1) -->
+  <g class="fragment" data-fragment-index="0">
+    <line x1="180" y1="120" x2="290" y2="120" stroke="#2563eb" stroke-width="10" stroke-linecap="round"/>
+    <line x1="290" y1="120" x2="400" y2="120" stroke="#7c3aed" stroke-width="10" stroke-linecap="round"/>
+  </g>
+  <!-- X: nodos base -->
+  <circle class="nd" cx="180" cy="120" r="26"/><text class="nt" x="180" y="120" dy=".35em">b</text>
+  <circle class="nd" cx="290" cy="120" r="26"/><text class="nt" x="290" y="120" dy=".35em">a</text>
+  <circle class="nd" cx="400" cy="120" r="26"/><text class="nt" x="400" y="120" dy=".35em">c</text>
+  <circle class="nd" cx="510" cy="120" r="26"/><text class="nt" x="510" y="120" dy=".35em">d</text>
+  <!-- X: nodos resaltados (paso 1) -->
+  <g class="fragment" data-fragment-index="0">
+    <circle cx="180" cy="120" r="26" fill="#dbeafe" stroke="#2563eb" stroke-width="3.5"/><text class="nth" x="180" y="120" dy=".35em" style="fill:#1d4ed8">b</text>
+    <circle cx="290" cy="120" r="30" fill="#fef3c7" stroke="#d97706" stroke-width="4.5"/><text class="nth" x="290" y="120" dy=".35em" style="fill:#b45309">a</text>
+    <circle cx="400" cy="120" r="26" fill="#ede9fe" stroke="#7c3aed" stroke-width="3.5"/><text class="nth" x="400" y="120" dy=".35em" style="fill:#6d28d9">c</text>
+    <text x="235" y="97" text-anchor="middle" style="font-size:18px;font-weight:600;fill:#2563eb">{a,b}</text>
+    <text x="345" y="97" text-anchor="middle" style="font-size:18px;font-weight:600;fill:#7c3aed">{a,c}</text>
+    <text x="290" y="178" text-anchor="middle" style="font-size:20px;font-weight:700;fill:#334155">Vecinos de a</text>
+  </g>
+
+  <!-- Y: aristas y nodos base -->
+  <line class="eg" x1="230" y1="390" x2="340" y2="390"/>
+  <line class="eg" x1="340" y1="390" x2="450" y2="390"/>
+  <line class="eg" x1="450" y1="390" x2="560" y2="390"/>
+  <circle class="nd" cx="230" cy="390" r="26"/><text class="nt" x="230" y="390" dy=".35em">y₄</text>
+  <circle class="nd" cx="340" cy="390" r="26"/><text class="nt" x="340" y="390" dy=".35em">y₁</text>
+  <circle class="nd" cx="450" cy="390" r="26"/><text class="nt" x="450" y="390" dy=".35em">y₂</text>
+  <circle class="nd" cx="560" cy="390" r="26"/><text class="nt" x="560" y="390" dy=".35em">y₃</text>
+
+  <!-- Flecha de contexto d → y₃ -->
+  <line x1="516" y1="145" x2="560" y2="334" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="3 7" stroke-linecap="round" marker-end="url(#l-mk)"/>
+
+  <!-- Paso 2a: f(b) y f(c) -->
+  <g class="fragment" data-fragment-index="1">
+    <line x1="194" y1="142" x2="332" y2="334" stroke="#2563eb" stroke-width="3.5" marker-end="url(#l-mk)"/>
+    <line x1="406" y1="145" x2="450" y2="334" stroke="#7c3aed" stroke-width="3.5" marker-end="url(#l-mk)"/>
+    <circle cx="340" cy="390" r="26" fill="#dbeafe" stroke="#2563eb" stroke-width="3.5"/><text class="nth" x="340" y="390" dy=".35em" style="fill:#1d4ed8">y₁</text>
+    <circle cx="450" cy="390" r="26" fill="#ede9fe" stroke="#7c3aed" stroke-width="3.5"/><text class="nth" x="450" y="390" dy=".35em" style="fill:#6d28d9">y₂</text>
+    <text class="tag" x="340" y="357" style="fill:#2563eb">f(b)</text>
+    <text class="tag" x="450" y="357" style="fill:#7c3aed">f(c)</text>
+  </g>
+</svg>
+```
+
+:::::
+::::: {.column width="40%" .sets}
+
+:::: {.fragment data-fragment-index="0"}
+$$
+\begin{aligned}
+V_a &= \{\{a,b\},\{a,c\}\}\\
+V_a^* &= \{a,b,c\}\\
+\hat V_a^* &= \{b,c\}
+\end{aligned}
+$$
+::::
+
+:::: {.fragment data-fragment-index="1"}
+$$
+f(\hat V_a^*)=\{f(b),f(c)\}=\{y_1,y_2\}
+$$
+::::
+
+:::: {.fragment data-fragment-index="2"}
+$$
+\begin{aligned}
+V_{y_1} &= \{\{y_4,y_1\},\{y_1,y_2\}\}\\
+V_{y_1}^* &= \{y_4,y_1,y_2\}\\[6pt]
+V_{y_2} &= \{\{y_1,y_2\},\{y_2,y_3\}\}\\
+V_{y_2}^* &= \{y_1,y_2,y_3\}
+\end{aligned}
+$$
+::::
+
+:::: {.fragment data-fragment-index="3"}
+$$
+\begin{aligned}
+\lim_{x\to a}f(x) &= V_{y_1}^*\cap V_{y_2}^*\\
+&= \{y_1,y_2\}
+\end{aligned}
+$$
+::::
+
+:::::
+::::::
+
+::: notes
+Ejemplo lineal: X = {b,a,c,d}, Y = {y₄,y₁,y₂,y₃}, con f(b)=y₁, f(c)=y₂, f(d)=y₃.
+Pasos (→): 0) V_a, V_a^*, V̂_a^*. 1) f(V̂_a^*). 2) V_{y₁}^* y V_{y₂}^*. 3) la intersección es el límite.
+:::
+
+# Proposición
+
+$$f\ \text{continua}\iff\forall a\in X:\ f(a)\in\lim_{x\to a}f(x)$$
+
+## Proposición ($\Rightarrow$): $f$ continua $\Rightarrow f(a)\in\lim_{x\to a}f(x)$ {.moldes}
+
+:::::: {.columns}
+::::: {.column width="60%"}
+
+```{=html}
+<svg class="msvg" viewBox="0 0 760 592" xmlns="http://www.w3.org/2000/svg" role="img"
+     aria-label="Demostración de la dirección directa">
+  <defs>
+    <marker id="p-mk" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker>
+    <clipPath id="p-clipA"><ellipse cx="177" cy="410" rx="105" ry="56"/></clipPath>
+    <clipPath id="p-clipB"><ellipse cx="245" cy="410" rx="175" ry="74"/></clipPath>
+  </defs>
+
+  <!-- Insignias de caso -->
+  <g class="fragment fade-out" data-fragment-index="0"><text class="badge" x="20" y="38" fill="#1e293b">f continua</text></g>
+  <g class="fragment" data-fragment-index="0"><g class="fragment fade-out" data-fragment-index="2"><text class="badge" x="20" y="38" fill="#b45309">Caso 1 · a = e</text></g></g>
+  <g class="fragment" data-fragment-index="2"><text class="badge" x="20" y="38" fill="#b45309">Caso 2 · a</text></g>
+
+  <!-- Chips de resultado -->
+  <g class="fragment" data-fragment-index="1"><g class="fragment fade-out" data-fragment-index="2">
+    <rect x="490" y="8" width="250" height="42" rx="21" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+    <text class="chipt" x="615" y="36" fill="#166534">f(e) ∈ lim ✓</text>
+  </g></g>
+  <g class="fragment" data-fragment-index="8">
+    <rect x="490" y="8" width="250" height="42" rx="21" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+    <text class="chipt" x="615" y="36" fill="#166534">f(a) ∈ lim ✓</text>
+  </g>
+
+  <!-- Paneles -->
+  <rect x="70" y="56" width="670" height="190" rx="18" fill="#f8fafc" stroke="#e2e8f0"/>
+  <rect x="70" y="296" width="670" height="282" rx="18" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text class="ptag" x="35" y="160">X</text>
+  <text class="ptag" x="35" y="420">Y</text>
+  <text class="small" x="732" y="236">ℳ<tspan dy="5" font-size="11">X</tspan><tspan dy="-5"> = {{a,b}, {a,c}, {a,d}, {c,d}, {e}}</tspan></text>
+  <text class="small" x="732" y="314">ℳ<tspan dy="5" font-size="11">Y</tspan><tspan dy="-5"> = {{u₁,u₂}, {u₂,u₃}, {u₃,u₄}, {u₅}}</tspan></text>
+
+  <!-- Caso 1: Y completo -->
+  <g class="fragment" data-fragment-index="1"><g class="fragment fade-out" data-fragment-index="2">
+    <rect x="82" y="304" width="646" height="266" rx="14" fill="#16a34a" fill-opacity=".05" stroke="#16a34a" stroke-width="3.5" stroke-dasharray="10 7"/>
+    <text x="100" y="334" class="rlab" fill="#15803d">lim = ∩<tspan dy="9" font-size="14">∅</tspan><tspan dy="-9"> = Y</tspan></text>
+  </g></g>
+
+  <!-- Regiones -->
+  <g class="fragment" data-fragment-index="5">
+    <ellipse cx="380" cy="410" rx="175" ry="92" fill="#7c3aed" fill-opacity=".09" stroke="#7c3aed" stroke-width="3" stroke-dasharray="9 6"/>
+    <text class="rlab" x="420" y="534" text-anchor="middle" fill="#7c3aed">V<tspan dy="-9" font-size="15">*</tspan><tspan dy="15" font-size="15">f(c)</tspan></text>
+  </g>
+  <g class="fragment" data-fragment-index="6">
+    <ellipse cx="177" cy="410" rx="105" ry="56" fill="#2563eb" fill-opacity=".10" stroke="#2563eb" stroke-width="3" stroke-dasharray="9 6"/>
+    <text class="rlab" x="105" y="534" text-anchor="middle" fill="#2563eb">V<tspan dy="-9" font-size="15">*</tspan><tspan dy="15" font-size="15">f(b)</tspan></text>
+  </g>
+  <g class="fragment" data-fragment-index="7">
+    <ellipse cx="245" cy="410" rx="175" ry="74" fill="#0d9488" fill-opacity=".09" stroke="#0d9488" stroke-width="3" stroke-dasharray="9 6"/>
+    <text class="rlab" x="262" y="534" text-anchor="middle" fill="#0d9488">V<tspan dy="-9" font-size="15">*</tspan><tspan dy="15" font-size="15">f(d)</tspan></text>
+  </g>
+  <g class="fragment" data-fragment-index="8">
+    <g clip-path="url(#p-clipA)"><g clip-path="url(#p-clipB)">
+      <ellipse cx="380" cy="410" rx="175" ry="92" fill="#16a34a" fill-opacity=".38" stroke="#16a34a" stroke-width="3.5"/>
+    </g></g>
+    <text x="300" y="566" text-anchor="middle" class="rlab" fill="#15803d">lim<tspan dy="9" font-size="14">x→a</tspan><tspan dy="-9" font-size="22"> f(x)</tspan><tspan> = ⋂ V</tspan><tspan dy="-9" font-size="15">*</tspan><tspan dy="15" font-size="15">y</tspan></text>
+  </g>
+
+  <!-- X: aristas base -->
+  <line class="eg" x1="100" y1="150" x2="230" y2="120"/>
+  <line class="eg" x1="230" y1="120" x2="380" y2="120"/>
+  <line class="eg" x1="230" y1="120" x2="290" y2="205"/>
+  <line class="eg" x1="380" y1="120" x2="290" y2="205"/>
+  <!-- X: aristas resaltadas -->
+  <g class="fragment" data-fragment-index="2">
+    <line x1="100" y1="150" x2="230" y2="120" stroke="#2563eb" stroke-width="10" stroke-linecap="round"/>
+    <line x1="230" y1="120" x2="380" y2="120" stroke="#7c3aed" stroke-width="10" stroke-linecap="round"/>
+    <line x1="230" y1="120" x2="290" y2="205" stroke="#0d9488" stroke-width="10" stroke-linecap="round"/>
+  </g>
+  <g class="fragment" data-fragment-index="3">
+    <line x1="230" y1="120" x2="380" y2="120" stroke="#d97706" stroke-opacity=".5" stroke-width="18" stroke-linecap="round"/>
+    <line x1="230" y1="120" x2="380" y2="120" stroke="#7c3aed" stroke-width="8" stroke-linecap="round"/>
+    <text x="305" y="96" text-anchor="middle" style="font-size:22px;font-weight:700;font-style:italic;fill:#b45309">m</text>
+  </g>
+  <g class="fragment" data-fragment-index="6">
+    <line x1="100" y1="150" x2="230" y2="120" stroke="#d97706" stroke-opacity=".5" stroke-width="18" stroke-linecap="round"/>
+    <line x1="100" y1="150" x2="230" y2="120" stroke="#2563eb" stroke-width="8" stroke-linecap="round"/>
+  </g>
+  <g class="fragment" data-fragment-index="7">
+    <line x1="230" y1="120" x2="290" y2="205" stroke="#d97706" stroke-opacity=".5" stroke-width="18" stroke-linecap="round"/>
+    <line x1="230" y1="120" x2="290" y2="205" stroke="#0d9488" stroke-width="8" stroke-linecap="round"/>
+  </g>
+
+  <!-- X: nodos base (e con anillo de singolete) -->
+  <circle cx="600" cy="150" r="35" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="4 5"/>
+  <circle class="nd" cx="100" cy="150" r="24"/><text class="nt" x="100" y="150" dy=".35em">b</text>
+  <circle class="nd" cx="230" cy="120" r="24"/><text class="nt" x="230" y="120" dy=".35em">a</text>
+  <circle class="nd" cx="290" cy="205" r="24"/><text class="nt" x="290" y="205" dy=".35em">d</text>
+  <circle class="nd" cx="380" cy="120" r="24"/><text class="nt" x="380" y="120" dy=".35em">c</text>
+  <circle class="nd" cx="600" cy="150" r="24"/><text class="nt" x="600" y="150" dy=".35em">e</text>
+
+  <!-- X: nodos resaltados -->
+  <g class="fragment" data-fragment-index="0"><g class="fragment fade-out" data-fragment-index="2">
+    <circle cx="600" cy="150" r="27" fill="#fef3c7" stroke="#d97706" stroke-width="4.5"/><text class="nth" x="600" y="150" dy=".35em" style="fill:#b45309">e</text>
+    <text x="600" y="100" text-anchor="middle" style="font-size:22px;font-weight:700;fill:#b45309">V̂<tspan dy="-9" font-size="15">*</tspan><tspan dy="15" font-size="15">e</tspan><tspan dy="-6"> = ∅</tspan></text>
+  </g></g>
+  <g class="fragment" data-fragment-index="2">
+    <circle cx="100" cy="150" r="24" fill="#dbeafe" stroke="#2563eb" stroke-width="3.5"/><text class="nth" x="100" y="150" dy=".35em" style="fill:#1d4ed8">b</text>
+    <circle cx="230" cy="120" r="27" fill="#fef3c7" stroke="#d97706" stroke-width="4.5"/><text class="nth" x="230" y="120" dy=".35em" style="fill:#b45309">a</text>
+    <circle cx="290" cy="205" r="24" fill="#ccfbf1" stroke="#0d9488" stroke-width="3.5"/><text class="nth" x="290" y="205" dy=".35em" style="fill:#0f766e">d</text>
+    <circle cx="380" cy="120" r="24" fill="#ede9fe" stroke="#7c3aed" stroke-width="3.5"/><text class="nth" x="380" y="120" dy=".35em" style="fill:#6d28d9">c</text>
+  </g>
+  <g class="fragment" data-fragment-index="3">
+    <text x="418" y="104" style="font-size:22px;font-weight:700;font-style:italic;fill:#6d28d9">a′</text>
+  </g>
+
+  <!-- Y: aristas base y resaltadas -->
+  <line class="eg" x1="110" y1="410" x2="245" y2="410"/>
+  <line class="eg" x1="245" y1="410" x2="380" y2="410"/>
+  <line class="eg" x1="380" y1="410" x2="515" y2="410"/>
+  <g class="fragment" data-fragment-index="4">
+    <line x1="245" y1="410" x2="380" y2="410" stroke="#d97706" stroke-width="11" stroke-linecap="round"/>
+    <text x="312" y="394" text-anchor="middle" style="font-size:20px;font-weight:700;font-style:italic;fill:#b45309">m<tspan dy="5" font-size="12">Y</tspan></text>
+  </g>
+  <g class="fragment" data-fragment-index="6">
+    <line x1="110" y1="410" x2="245" y2="410" stroke="#d97706" stroke-width="11" stroke-linecap="round"/>
+  </g>
+
+  <!-- Y: nodos base -->
+  <circle cx="650" cy="410" r="35" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="4 5"/>
+  <circle class="nd" cx="110" cy="410" r="26"/><text class="nt" x="110" y="410" dy=".35em">u₁</text>
+  <circle class="nd" cx="245" cy="410" r="26"/><text class="nt" x="245" y="410" dy=".35em">u₂</text>
+  <circle class="nd" cx="380" cy="410" r="26"/><text class="nt" x="380" y="410" dy=".35em">u₃</text>
+  <circle class="nd" cx="515" cy="410" r="26"/><text class="nt" x="515" y="410" dy=".35em">u₄</text>
+  <circle class="nd" cx="650" cy="410" r="26"/><text class="nt" x="650" y="410" dy=".35em">u₅</text>
+
+  <!-- Y: nodos resaltados -->
+  <g class="fragment" data-fragment-index="1"><g class="fragment fade-out" data-fragment-index="2">
+    <circle cx="650" cy="410" r="28" fill="#fef3c7" stroke="#d97706" stroke-width="4.5"/><text class="nth" x="650" y="410" dy=".35em" style="fill:#b45309">u₅</text>
+  </g></g>
+  <g class="fragment" data-fragment-index="3">
+    <circle cx="380" cy="410" r="26" fill="#ede9fe" stroke="#7c3aed" stroke-width="3.5"/><text class="nth" x="380" y="410" dy=".35em" style="fill:#6d28d9">u₃</text>
+  </g>
+  <g class="fragment" data-fragment-index="4">
+    <circle cx="245" cy="410" r="26" fill="#fef3c7" stroke="#d97706" stroke-width="4"/><text class="nth" x="245" y="410" dy=".35em" style="fill:#b45309">u₂</text>
+  </g>
+  <g class="fragment" data-fragment-index="5">
+    <circle cx="245" cy="410" r="37" fill="none" stroke="#d97706" stroke-width="4.5"/>
+  </g>
+  <g class="fragment" data-fragment-index="6">
+    <circle cx="110" cy="410" r="26" fill="#dbeafe" stroke="#2563eb" stroke-width="3.5"/><text class="nth" x="110" y="410" dy=".35em" style="fill:#1d4ed8">u₁</text>
+  </g>
+  <g class="fragment" data-fragment-index="7">
+    <circle class="halo" cx="245" cy="410" r="46" fill="none" stroke="#0d9488" stroke-width="4" stroke-dasharray="6 5"/>
+  </g>
+
+  <!-- Flechas f y etiquetas -->
+  <g class="fragment" data-fragment-index="1"><g class="fragment fade-out" data-fragment-index="2">
+    <line x1="600" y1="177" x2="648" y2="356" stroke="#d97706" stroke-width="3.5" marker-end="url(#p-mk)"/>
+    <text class="tag" x="650" y="380" style="fill:#b45309">f(e)</text>
+  </g></g>
+  <g class="fragment" data-fragment-index="3">
+    <line x1="380" y1="146" x2="380" y2="356" stroke="#7c3aed" stroke-width="3.5" marker-end="url(#p-mk)"/>
+    <text class="tag" x="380" y="380" style="fill:#6d28d9">y = f(c)</text>
+  </g>
+  <g class="fragment" data-fragment-index="4">
+    <line x1="232" y1="147" x2="243" y2="356" stroke="#d97706" stroke-width="3.5" marker-end="url(#p-mk)"/>
+    <g class="fragment fade-out" data-fragment-index="7"><text class="tag" x="245" y="380" style="fill:#b45309">f(a)</text></g>
+  </g>
+  <g class="fragment" data-fragment-index="6">
+    <line x1="101" y1="175" x2="109" y2="356" stroke="#2563eb" stroke-width="3.5" marker-end="url(#p-mk)"/>
+    <text class="tag" x="108" y="380" style="fill:#1d4ed8">f(b)</text>
+  </g>
+  <g class="fragment" data-fragment-index="7">
+    <line x1="286" y1="229" x2="257" y2="356" stroke="#0d9488" stroke-width="3.5" marker-end="url(#p-mk)"/>
+    <text class="tag" x="245" y="380"><tspan style="fill:#b45309">f(a)</tspan><tspan style="fill:#475569"> = </tspan><tspan style="fill:#0f766e">f(d)</tspan></text>
+  </g>
+</svg>
+```
+
+:::::
+::::: {.column width="40%" .sets}
+
+:::: {.fragment data-fragment-index="0"}
+**Caso 1** $\ \hat V_e^*=\emptyset$
+::::
+
+:::: {.fragment data-fragment-index="1"}
+$\displaystyle\lim_{x\to e}f(x)=\bigcap_{y\in\emptyset}V_y^*=Y\ni f(e)$
+::::
+
+:::: {.fragment data-fragment-index="2"}
+**Caso 2** $\ \hat V_a^*=\{b,c,d\}$
+::::
+
+:::: {.fragment data-fragment-index="3"}
+$y=f(a')$, $a'=c$ $\ \Rightarrow\ m=\{a,a'\}\in\mathcal M_X$
+::::
+
+:::: {.fragment data-fragment-index="4"}
+$f$ continua $\Rightarrow\ f(m)\subseteq m_Y\in\mathcal M_Y$
+::::
+
+:::: {.fragment data-fragment-index="5"}
+$\{f(a),y\}\subseteq m_Y\ \Rightarrow\ f(a)\in V_{f(c)}^*$
+::::
+
+:::: {.fragment data-fragment-index="6"}
+$y=f(b)$: $\ f(a)\in V_{f(b)}^*$
+::::
+
+:::: {.fragment data-fragment-index="7"}
+$y=f(d)$: $\ f(a)\in V_{f(d)}^*$ $\ (f(m)=\{f(a)\})$
+::::
+
+:::: {.fragment data-fragment-index="8"}
+$y$ arbitrario $\Rightarrow\ f(a)\in\displaystyle\bigcap_{y\in f(\hat V_a^*)}V_y^*$
+::::
+
+:::::
+::::::
+
+::: notes
+Grafo: X = {a,b,c,d,e}, ℳ_X = {{a,b},{a,c},{a,d},{c,d},{e}}. Y = {u₁..u₅}, ℳ_Y = {{u₁,u₂},{u₂,u₃},{u₃,u₄},{u₅}}.
+f(b)=u₁, f(a)=f(d)=u₂, f(c)=u₃, f(e)=u₅. Con f(a)=f(d), la adyacencia {a,d} colapsa a un singolete.
+
+Pasos (→): 0) Caso 1: V̂_e = ∅. 1) El límite es Y y f(e) ∈ Y. 2) Caso 2: vecinos de a. 3) Se toma y = f(a′) con a′ = c y la adyacencia m = {a,c}. 4) Continuidad: f(m) ⊆ m_Y. 5) f(a) ∈ V*_{f(c)}. 6) Lo mismo para y = f(b). 7) Lo mismo para y = f(d) (colapso). 8) La intersección de las tres regiones es el límite y contiene a f(a).
+:::
+
+## Proposición ($\Leftarrow$): $\forall a,\ f(a)\in\lim_{x\to a}f(x)\ \Rightarrow\ f$ continua {.moldes}
+
+:::::: {.columns}
+::::: {.column width="60%"}
+
+```{=html}
+<svg class="msvg" viewBox="0 0 760 592" xmlns="http://www.w3.org/2000/svg" role="img"
+     aria-label="Demostración de la dirección recíproca">
+  <defs>
+    <marker id="q-mk" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="context-stroke"/></marker>
+    <clipPath id="q-clipA"><ellipse cx="177" cy="410" rx="105" ry="56"/></clipPath>
+    <clipPath id="q-clipB"><ellipse cx="245" cy="410" rx="175" ry="74"/></clipPath>
+  </defs>
+
+  <!-- Insignias de caso -->
+  <g class="fragment fade-out" data-fragment-index="0"><text class="badge" x="20" y="38" fill="#1e293b">m ∈ ℳ<tspan dy="5" font-size="15">X</tspan></text></g>
+  <g class="fragment" data-fragment-index="0"><g class="fragment fade-out" data-fragment-index="2"><text class="badge" x="20" y="38" fill="#b45309">Caso 1 · m = {e}</text></g></g>
+  <g class="fragment" data-fragment-index="2"><text class="badge" x="20" y="38" fill="#b45309">Caso 2 · m = {a,b}</text></g>
+
+  <!-- Chips de estado -->
+  <g class="fragment" data-fragment-index="1"><g class="fragment fade-out" data-fragment-index="2">
+    <rect x="470" y="8" width="270" height="42" rx="21" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+    <text class="chipt" x="605" y="36" fill="#166534">{f(e)} ⊆ m<tspan dy="5" font-size="12">Y</tspan><tspan dy="-5"> ✓</tspan></text>
+  </g></g>
+  <g class="fragment" data-fragment-index="4"><g class="fragment fade-out" data-fragment-index="6">
+    <rect x="470" y="8" width="270" height="42" rx="21" fill="#fffbeb" stroke="#d97706" stroke-width="2.5"/>
+    <text class="chipt" x="605" y="36" fill="#b45309">H: f(a) ∈ lim</text>
+  </g></g>
+  <g class="fragment" data-fragment-index="6"><g class="fragment fade-out" data-fragment-index="7">
+    <rect x="470" y="8" width="270" height="42" rx="21" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+    <text class="chipt" x="605" y="36" fill="#166534">f(m) ⊆ m<tspan dy="5" font-size="12">Y</tspan><tspan dy="-5"> ✓</tspan></text>
+  </g></g>
+  <g class="fragment" data-fragment-index="7">
+    <rect x="470" y="8" width="270" height="42" rx="21" fill="#dcfce7" stroke="#16a34a" stroke-width="2.5"/>
+    <text class="chipt" x="605" y="36" fill="#166534">Molde preservado ✓</text>
+  </g>
+
+  <!-- Paneles -->
+  <rect x="70" y="56" width="670" height="190" rx="18" fill="#f8fafc" stroke="#e2e8f0"/>
+  <rect x="70" y="296" width="670" height="282" rx="18" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text class="ptag" x="35" y="160">X</text>
+  <text class="ptag" x="35" y="420">Y</text>
+  <text class="small" x="732" y="236">ℳ<tspan dy="5" font-size="11">X</tspan><tspan dy="-5"> = {{a,b}, {a,c}, {a,d}, {c,d}, {e}}</tspan></text>
+  <text class="small" x="732" y="314">ℳ<tspan dy="5" font-size="11">Y</tspan><tspan dy="-5"> = {{u₁,u₂}, {u₂,u₃}, {u₃,u₄}, {u₅}}</tspan></text>
+
+  <!-- Regiones: tenues (hipótesis) y énfasis en V*_{y0} -->
+  <g class="fragment" data-fragment-index="4">
+    <ellipse cx="380" cy="410" rx="175" ry="92" fill="none" stroke="#7c3aed" stroke-opacity=".45" stroke-width="2.5" stroke-dasharray="9 6"/>
+    <ellipse cx="245" cy="410" rx="175" ry="74" fill="none" stroke="#0d9488" stroke-opacity=".45" stroke-width="2.5" stroke-dasharray="9 6"/>
+    <ellipse cx="177" cy="410" rx="105" ry="56" fill="none" stroke="#2563eb" stroke-opacity=".45" stroke-width="2.5" stroke-dasharray="9 6"/>
+    <g clip-path="url(#q-clipA)"><g clip-path="url(#q-clipB)">
+      <ellipse cx="380" cy="410" rx="175" ry="92" fill="#16a34a" fill-opacity=".38" stroke="#16a34a" stroke-width="3.5"/>
+    </g></g>
+  </g>
+  <g class="fragment" data-fragment-index="5">
+    <ellipse cx="177" cy="410" rx="105" ry="56" fill="#2563eb" fill-opacity=".14" stroke="#2563eb" stroke-width="4.5"/>
+    <text class="rlab" x="105" y="534" text-anchor="middle" fill="#2563eb">V<tspan dy="-9" font-size="15">*</tspan><tspan dy="15" font-size="15">y₀</tspan></text>
+  </g>
+
+  <!-- X: aristas base -->
+  <line class="eg" x1="100" y1="150" x2="230" y2="120"/>
+  <line class="eg" x1="230" y1="120" x2="380" y2="120"/>
+  <line class="eg" x1="230" y1="120" x2="290" y2="205"/>
+  <line class="eg" x1="380" y1="120" x2="290" y2="205"/>
+  <!-- X: arista m = {a,b} -->
+  <g class="fragment" data-fragment-index="2">
+    <line x1="100" y1="150" x2="230" y2="120" stroke="#d97706" stroke-width="12" stroke-linecap="round"/>
+    <text x="158" y="116" text-anchor="middle" style="font-size:22px;font-weight:700;font-style:italic;fill:#b45309">m</text>
+  </g>
+  <!-- X: el resto de adyacencias (generalización) -->
+  <g class="fragment" data-fragment-index="7">
+    <line x1="230" y1="120" x2="380" y2="120" stroke="#16a34a" stroke-width="9" stroke-linecap="round"/>
+    <line x1="230" y1="120" x2="290" y2="205" stroke="#16a34a" stroke-width="9" stroke-linecap="round"/>
+    <line x1="380" y1="120" x2="290" y2="205" stroke="#16a34a" stroke-width="9" stroke-linecap="round"/>
+    <line x1="100" y1="150" x2="230" y2="120" stroke="#16a34a" stroke-width="9" stroke-linecap="round"/>
+  </g>
+
+  <!-- X: nodos base -->
+  <circle cx="600" cy="150" r="35" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="4 5"/>
+  <circle class="nd" cx="100" cy="150" r="24"/><text class="nt" x="100" y="150" dy=".35em">b</text>
+  <circle class="nd" cx="230" cy="120" r="24"/><text class="nt" x="230" y="120" dy=".35em">a</text>
+  <circle class="nd" cx="290" cy="205" r="24"/><text class="nt" x="290" y="205" dy=".35em">d</text>
+  <circle class="nd" cx="380" cy="120" r="24"/><text class="nt" x="380" y="120" dy=".35em">c</text>
+  <circle class="nd" cx="600" cy="150" r="24"/><text class="nt" x="600" y="150" dy=".35em">e</text>
+
+  <!-- X: nodos resaltados -->
+  <g class="fragment" data-fragment-index="0"><g class="fragment fade-out" data-fragment-index="2">
+    <circle cx="600" cy="150" r="27" fill="#fef3c7" stroke="#d97706" stroke-width="4.5"/><text class="nth" x="600" y="150" dy=".35em" style="fill:#b45309">e</text>
+    <circle cx="600" cy="150" r="38" fill="none" stroke="#d97706" stroke-width="4" stroke-dasharray="4 5"/>
+    <text x="600" y="98" text-anchor="middle" style="font-size:22px;font-weight:700;font-style:italic;fill:#b45309">m = {e}</text>
+  </g></g>
+  <g class="fragment" data-fragment-index="2">
+    <circle cx="100" cy="150" r="24" fill="#dbeafe" stroke="#2563eb" stroke-width="3.5"/><text class="nth" x="100" y="150" dy=".35em" style="fill:#1d4ed8">b</text>
+    <circle cx="230" cy="120" r="27" fill="#fef3c7" stroke="#d97706" stroke-width="4.5"/><text class="nth" x="230" y="120" dy=".35em" style="fill:#b45309">a</text>
+  </g>
+  <g class="fragment" data-fragment-index="3">
+    <circle cx="100" cy="150" r="33" fill="none" stroke="#2563eb" stroke-width="4" stroke-dasharray="5 4"/>
+  </g>
+
+  <!-- Y: aristas base y resaltadas -->
+  <line class="eg" x1="110" y1="410" x2="245" y2="410"/>
+  <line class="eg" x1="245" y1="410" x2="380" y2="410"/>
+  <line class="eg" x1="380" y1="410" x2="515" y2="410"/>
+  <g class="fragment" data-fragment-index="6">
+    <line x1="110" y1="410" x2="245" y2="410" stroke="#d97706" stroke-width="11" stroke-linecap="round"/>
+    <text x="178" y="394" text-anchor="middle" style="font-size:20px;font-weight:700;font-style:italic;fill:#b45309">m<tspan dy="5" font-size="12">Y</tspan></text>
+  </g>
+  <g class="fragment" data-fragment-index="7">
+    <line x1="245" y1="410" x2="380" y2="410" stroke="#16a34a" stroke-width="9" stroke-linecap="round"/>
+    <line x1="110" y1="410" x2="245" y2="410" stroke="#16a34a" stroke-width="9" stroke-linecap="round"/>
+  </g>
+
+  <!-- Y: nodos base -->
+  <circle cx="650" cy="410" r="35" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="4 5"/>
+  <circle class="nd" cx="110" cy="410" r="26"/><text class="nt" x="110" y="410" dy=".35em">u₁</text>
+  <circle class="nd" cx="245" cy="410" r="26"/><text class="nt" x="245" y="410" dy=".35em">u₂</text>
+  <circle class="nd" cx="380" cy="410" r="26"/><text class="nt" x="380" y="410" dy=".35em">u₃</text>
+  <circle class="nd" cx="515" cy="410" r="26"/><text class="nt" x="515" y="410" dy=".35em">u₄</text>
+  <circle class="nd" cx="650" cy="410" r="26"/><text class="nt" x="650" y="410" dy=".35em">u₅</text>
+
+  <!-- Y: nodos resaltados -->
+  <g class="fragment" data-fragment-index="1"><g class="fragment fade-out" data-fragment-index="2">
+    <circle cx="650" cy="410" r="28" fill="#fef3c7" stroke="#d97706" stroke-width="4.5"/><text class="nth" x="650" y="410" dy=".35em" style="fill:#b45309">u₅</text>
+    <circle cx="650" cy="410" r="38" fill="none" stroke="#16a34a" stroke-width="4.5"/>
+    <text x="650" y="474" text-anchor="middle" style="font-size:20px;font-weight:700;font-style:italic;fill:#15803d">m<tspan dy="5" font-size="12">Y</tspan></text>
+  </g></g>
+  <g class="fragment" data-fragment-index="3">
+    <circle cx="110" cy="410" r="26" fill="#dbeafe" stroke="#2563eb" stroke-width="3.5"/><text class="nth" x="110" y="410" dy=".35em" style="fill:#1d4ed8">u₁</text>
+  </g>
+  <g class="fragment" data-fragment-index="4">
+    <circle cx="245" cy="410" r="26" fill="#fef3c7" stroke="#d97706" stroke-width="4"/><text class="nth" x="245" y="410" dy=".35em" style="fill:#b45309">u₂</text>
+    <circle cx="245" cy="410" r="37" fill="none" stroke="#d97706" stroke-width="4.5"/>
+  </g>
+  <g class="fragment" data-fragment-index="7">
+    <circle class="halo" cx="245" cy="410" r="46" fill="none" stroke="#0d9488" stroke-width="4" stroke-dasharray="6 5"/>
+  </g>
+
+  <!-- Flechas f y etiquetas -->
+  <g class="fragment" data-fragment-index="1"><g class="fragment fade-out" data-fragment-index="2">
+    <line x1="600" y1="177" x2="648" y2="356" stroke="#d97706" stroke-width="3.5" marker-end="url(#q-mk)"/>
+    <text class="tag" x="650" y="380" style="fill:#b45309">f(e)</text>
+  </g></g>
+  <g class="fragment" data-fragment-index="3">
+    <line x1="101" y1="175" x2="109" y2="356" stroke="#2563eb" stroke-width="3.5" marker-end="url(#q-mk)"/>
+    <text class="tag" x="108" y="380" style="fill:#1d4ed8">y₀ = f(b)</text>
+  </g>
+  <g class="fragment" data-fragment-index="4">
+    <line x1="232" y1="147" x2="243" y2="356" stroke="#d97706" stroke-width="3.5" marker-end="url(#q-mk)"/>
+    <text class="tag" x="250" y="380" style="fill:#b45309">f(a)</text>
+  </g>
+  <g class="fragment" data-fragment-index="7">
+    <line x1="380" y1="146" x2="380" y2="356" stroke="#16a34a" stroke-width="3" stroke-dasharray="8 5" marker-end="url(#q-mk)"/>
+    <line x1="286" y1="229" x2="257" y2="356" stroke="#16a34a" stroke-width="3" stroke-dasharray="8 5" marker-end="url(#q-mk)"/>
+  </g>
+</svg>
+```
+
+:::::
+::::: {.column width="40%" .sets}
+
+:::: {.fixed}
+**H** $\ \forall a:\ f(a)\in\displaystyle\bigcap_{y\in f(\hat V_a^*)}V_y^*$
+::::
+
+:::: {.fragment data-fragment-index="0"}
+**Caso 1** $\ m=\{e\}$
+::::
+
+:::: {.fragment data-fragment-index="1"}
+$f(e)\in m_Y$ (cond. 2) $\Rightarrow\ f(m)\subseteq m_Y$
+::::
+
+:::: {.fragment data-fragment-index="2"}
+**Caso 2** $\ m=\{a,b\}$, $\ a\neq b$
+::::
+
+:::: {.fragment data-fragment-index="3"}
+$b\in\hat V_a^*\ \Rightarrow\ y_0:=f(b)\in f(\hat V_a^*)$
+::::
+
+:::: {.fragment data-fragment-index="4"}
+**H** en $a$: $\ f(a)\in\displaystyle\bigcap_{y}V_y^*$
+::::
+
+:::: {.fragment data-fragment-index="5"}
+$\Rightarrow\ f(a)\in V_{y_0}^*$
+::::
+
+:::: {.fragment data-fragment-index="6"}
+$\Rightarrow\ \exists\, m_Y:\ \{f(a),f(b)\}=f(m)\subseteq m_Y$
+::::
+
+:::: {.fragment data-fragment-index="7"}
+$m$ arbitrario $\Rightarrow\ f$ continua $\ \blacksquare$
+::::
+
+:::::
+::::::
+
+::: notes
+Mismo grafo que en (⇒). La hipótesis H se cumple en todo punto.
+
+Pasos (→): 0) Se toma m ∈ ℳ_X; Caso 1: m = {e}. 1) Por la condición 2 del molde, f(e) está en algún m_Y ({u₅}). 2) Caso 2: m = {a,b}. 3) b ∈ V̂_a, luego y₀ = f(b) = u₁ ∈ f(V̂_a). 4) H en a: f(a) = u₂ está en la intersección. 5) En particular f(a) ∈ V*_{y₀}. 6) Existe m_Y = {u₁,u₂} con f(m) ⊆ m_Y. 7) Como m era arbitrario (también {a,c}, {a,d} con colapso, {c,d}), f es continua.
+:::
